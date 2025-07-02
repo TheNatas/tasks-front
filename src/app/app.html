@@ -1,0 +1,10 @@
+<h1>Hello, {{ title }}</h1>
+      <p>Congratulations! Your app is running. 🎉</p>
+      <h1>{{ message }}</h1>
+      <h1>Tasks:</h1>
+      <ul>
+        <li *ngFor="let task of tasks">
+          {{ task.description }}
+          <span *ngIf="task.done" class="completed">✔️</span>
+        </li>
+      </ul>
