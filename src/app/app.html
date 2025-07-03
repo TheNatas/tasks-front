@@ -6,5 +6,6 @@
         <li *ngFor="let task of tasks">
           {{ task.description }}
           <span *ngIf="task.done" class="completed">✔️</span>
+          <button *ngIf="!task.done" (click)="markAsDone(task.id)">Mark as done</button>
         </li>
       </ul>
