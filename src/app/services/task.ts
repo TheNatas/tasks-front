@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
 export interface Task {
   id: number;
@@ -8,24 +9,32 @@ export interface Task {
   done: boolean;
 }
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class TaskService {
-
-  private readonly API_URL = 'http://localhost:8080/api/tasks';
+  private tasksSubject = new BehaviorSubject<Task[]>([]);
+  tasks$ = this.tasksSubject.asObservable();
 
   constructor(private http: HttpClient) {}
 
-  getAll(): Observable<Task[]> {
-    return this.http.get<Task[]>(this.API_URL);
+  loadAll() {
+    return this.http.get<Task[]>('http://localhost:8080/api/tasks').pipe(
+      tap(tasks => this.tasksSubject.next(tasks))
+    );
   }
 
-  markAsDone(id: number): Observable<Task> {
-    return this.http.put<Task>(`${this.API_URL}/${id}/done`, {});
+  markAsDone(id: number) {
+    return this.http.put(`http://localhost:8080/api/tasks/${id}/done`, {}).pipe(
+      tap(() => {
+        // Re-fetch tasks after update
+        this.loadAll().subscribe();
+      })
+    );
   }
 
-  create(description: string): Observable<Task> {
-    return this.http.post<Task>(this.API_URL, { description });
+  create(description: string) {
+    const task = { description, done: false };
+    return this.http.post<Task>('http://localhost:8080/api/tasks', task).pipe(
+      tap(() => this.loadAll().subscribe()) // refresh after create
+    );
   }
 }

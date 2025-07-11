@@ -1,27 +1,32 @@
-import { ChangeDetectorRef, Component, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TaskService, Task } from '../../services/task';
-import { AsyncPipe } from '@angular/common';
-import { BehaviorSubject } from 'rxjs';
+import { TaskService } from '../../services/task';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-task-list',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './task-list.html',
 })
 export class TaskListComponent {
   private taskService = inject(TaskService);
+  tasks$ = this.taskService.tasks$;
+  newDescription = '';
 
-  tasks$ = new BehaviorSubject<Task[]>([]);
-
-  constructor() {
-    this.taskService.getAll().subscribe(tasks => this.tasks$.next(tasks));
+  ngOnInit(): void {
+    this.taskService.loadAll().subscribe();
   }
 
   markAsDone(id: number) {
-    this.taskService.markAsDone(id).subscribe(() => {
-      this.taskService.getAll().subscribe(tasks => this.tasks$.next(tasks));
+    this.taskService.markAsDone(id).subscribe();
+  }
+
+  addTask() {
+    if (!this.newDescription.trim()) return;
+
+    this.taskService.create(this.newDescription).subscribe(() => {
+      this.newDescription = ''; // clear input after creation
     });
   }
 

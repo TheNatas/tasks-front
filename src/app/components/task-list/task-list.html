@@ -5,3 +5,14 @@
     <button *ngIf="!task.done" (click)="markAsDone(task.id)">Mark as done</button>
   </li>
 </ul>
+
+<form (ngSubmit)="addTask()" #taskForm="ngForm">
+  <input
+    type="text"
+    name="description"
+    [(ngModel)]="newDescription"
+    required
+    placeholder="New task description"
+  />
+  <button type="submit" [disabled]="taskForm.invalid">Add Task</button>
+</form>
