@@ -1,0 +1,25 @@
+<ul>
+  <li *ngFor="let bill of bills$ | async">
+    {{ bill.description }}
+    <span *ngIf="bill.paid">✔️ Paid</span>
+    <button *ngIf="!bill.paid" (click)="markAsPaid(bill.id)">Mark as paid</button>
+  </li>
+</ul>
+
+<form (ngSubmit)="addBill()" #taskForm="ngForm">
+  <input
+    type="text"
+    name="description"
+    [(ngModel)]="newDescription"
+    required
+    placeholder="New bill description"
+  />
+  <input
+    type="number"
+    name="amount"
+    [(ngModel)]="newAmount"
+    required
+    placeholder="New bill amount"
+  />
+  <button type="submit" [disabled]="taskForm.invalid">Add Bill</button>
+</form>

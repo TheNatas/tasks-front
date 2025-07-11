@@ -1,32 +1,34 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TaskService } from '../../services/task';
+import { BillService } from '../../services/bill';
 import { FormsModule } from '@angular/forms';
 
 @Component({
-  selector: 'app-task-list',
+  selector: 'app-bill-list',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './task-list.html',
+  templateUrl: './bill-list.html',
 })
-export class TaskListComponent {
-  private taskService = inject(TaskService);
-  tasks$ = this.taskService.tasks$;
+export class BillListComponent {
+  private billService = inject(BillService);
+  bills$ = this.billService.bills$;
   newDescription = '';
+  newAmount = 0;
 
   ngOnInit(): void {
-    this.taskService.loadAll().subscribe();
+    this.billService.loadAll().subscribe();
   }
 
-  markAsDone(id: number) {
-    this.taskService.markAsDone(id).subscribe();
+  markAsPaid(id: number) {
+    this.billService.markAsPaid(id).subscribe();
   }
 
-  addTask() {
+  addBill() {
     if (!this.newDescription.trim()) return;
 
-    this.taskService.create(this.newDescription).subscribe(() => {
+    this.billService.create(this.newDescription, this.newAmount).subscribe(() => {
       this.newDescription = ''; // clear input after creation
+      this.newAmount = 0;
     });
   }
 
