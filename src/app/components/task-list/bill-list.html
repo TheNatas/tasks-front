@@ -1,25 +1,40 @@
-<ul>
-  <li *ngFor="let bill of bills$ | async">
-    {{ bill.description }}
-    <span *ngIf="bill.paid">✔️ Paid</span>
-    <button *ngIf="!bill.paid" (click)="markAsPaid(bill.id)">Mark as paid</button>
-  </li>
-</ul>
-
-<form (ngSubmit)="addBill()" #taskForm="ngForm">
-  <input
-    type="text"
-    name="description"
-    [(ngModel)]="newDescription"
-    required
-    placeholder="New bill description"
-  />
-  <input
-    type="number"
-    name="amount"
-    [(ngModel)]="newAmount"
-    required
-    placeholder="New bill amount"
-  />
-  <button type="submit" [disabled]="taskForm.invalid">Add Bill</button>
-</form>
+<div class="kanban-board">
+  <div class="kanban-column unpaid">
+    <h2>Unpaid</h2>
+    <ul>
+      <ng-container *ngFor="let bill of (bills$ | async)">
+        <li *ngIf="!bill.paid">
+          {{ bill.description }}<span *ngIf="bill.amount"> - ${{ bill.amount }}</span>
+          <button (click)="markAsPaid(bill.id)">Mark as paid</button>
+        </li>
+      </ng-container>
+    </ul>
+    <form (ngSubmit)="addBill()" #taskForm="ngForm" class="add-bill-form">
+      <input
+        type="text"
+        name="description"
+        [(ngModel)]="newDescription"
+        required
+        placeholder="New bill description"
+      />
+      <input
+        type="number"
+        name="amount"
+        [(ngModel)]="newAmount"
+        required
+        placeholder="New bill amount"
+      />
+      <button type="submit" [disabled]="taskForm.invalid">Add Bill</button>
+    </form>
+  </div>
+  <div class="kanban-column paid">
+    <h2>Paid</h2>
+    <ul>
+      <ng-container *ngFor="let bill of (bills$ | async)">
+        <li *ngIf="bill.paid">
+          {{ bill.description }}<span *ngIf="bill.amount"> - ${{ bill.amount }}</span> <span>✔️ Paid</span>
+        </li>
+      </ng-container>
+    </ul>
+  </div>
+</div>

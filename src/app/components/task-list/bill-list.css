@@ -1,0 +1,96 @@
+.kanban-board {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  align-items: flex-start;
+  margin: 2rem 0;
+}
+
+.kanban-column {
+  background: #f4f4f4;
+  border-radius: 8px;
+  padding: 1.5rem 1rem 1rem 1rem;
+  min-width: 300px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  display: flex;
+  flex-direction: column;
+  min-height: 400px;
+}
+
+.kanban-column h2 {
+  text-align: center;
+  margin-bottom: 1rem;
+  font-size: 1.3rem;
+  color: #333;
+}
+
+.kanban-column ul {
+  list-style: none;
+  padding: 0;
+  flex: 1 1 auto;
+}
+
+.kanban-column li {
+  background: #fff;
+  margin-bottom: 0.7rem;
+  padding: 0.8rem 1rem;
+  border-radius: 6px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1rem;
+}
+
+.kanban-column.unpaid li button {
+  background: #ff9800;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 0.3rem 0.8rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.kanban-column.unpaid li button:hover {
+  background: #e65100;
+}
+
+.kanban-column.paid li span {
+  color: #4caf50;
+  font-weight: bold;
+  margin-left: 0.5rem;
+}
+
+.add-bill-form {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  background: #e3f2fd;
+  padding: 1rem;
+  border-radius: 6px;
+}
+
+.add-bill-form input {
+  padding: 0.5rem;
+  border: 1px solid #bdbdbd;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.add-bill-form button {
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.2s;
+}
+
+.add-bill-form button:disabled {
+  background: #90caf9;
+  cursor: not-allowed;
+}

@@ -7,6 +7,7 @@ export interface Bill {
   id: number;
   description: string;
   paid: boolean;
+  amount: number;
 }
 
 @Injectable({ providedIn: 'root' })

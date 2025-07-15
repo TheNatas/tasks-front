@@ -8,6 +8,7 @@ import { FormsModule } from '@angular/forms';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './bill-list.html',
+  styleUrls: ['./bill-list.css']
 })
 export class BillListComponent {
   private billService = inject(BillService);
