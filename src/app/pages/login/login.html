@@ -1,0 +1,16 @@
+<!-- login.component.html -->
+<form [formGroup]="form" (ngSubmit)="login()">
+  <label>
+    Username:
+    <input type="text" formControlName="username" />
+  </label>
+
+  <label>
+    Password:
+    <input type="password" formControlName="password" />
+  </label>
+
+  <button type="submit" [disabled]="form.invalid">Login</button>
+
+  <p *ngIf="error" style="color: red">{{ error }}</p>
+</form>
