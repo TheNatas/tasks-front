@@ -1,5 +1,5 @@
 // login.component.ts
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth'; // We’ll create this next
@@ -13,7 +13,7 @@ import { UserService } from '../../services/user';
   templateUrl: './login.html',
   styleUrls: ['./login.css']
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   fb = inject(FormBuilder);
   auth = inject(AuthService);
   userService = inject(UserService);
@@ -22,12 +22,16 @@ export class LoginComponent {
   form = this.fb.group({
     username: ['', [Validators.required]],
     password: ['', Validators.required],
-    confirmPassword: ['', Validators.required],
-  }, { validators: this.passwordMatchValidator });
+    confirmPassword: [''],
+  });
 
   error: string | null = null;
   successMessage: string | null = null;
   activeTab: 'login' | 'signup' = 'login';
+
+  ngOnInit() {
+    this.updateFormValidation();
+  }
 
   login() {
     const { username, password } = this.form.value;
@@ -56,17 +60,38 @@ export class LoginComponent {
     this.activeTab = tab;
     this.error = null;
     this.form.reset();
+    this.updateFormValidation();
+  }
+
+  updateFormValidation() {
+    const confirmPasswordControl = this.form.get('confirmPassword');
+
+    if (this.activeTab === 'signup') {
+      confirmPasswordControl?.setValidators([Validators.required]);
+      this.form.setValidators([this.passwordMatchValidator]);
+    } else {
+      confirmPasswordControl?.clearValidators();
+      this.form.clearValidators();
+    }
+
+    confirmPasswordControl?.updateValueAndValidity();
+    this.form.updateValueAndValidity();
   }
 
   closeSuccessMessage() {
     this.successMessage = null;
   }
 
-  passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
+  passwordMatchValidator = (control: AbstractControl): ValidationErrors | null => {
+    // Only validate password match on signup tab
+    if (this.activeTab !== 'signup') {
+      return null;
+    }
+
     const password = control.get('password');
     const confirmPassword = control.get('confirmPassword');
 
-    if (!password || !confirmPassword) {
+    if (!password || !confirmPassword || !confirmPassword.value) {
       return null;
     }
 
