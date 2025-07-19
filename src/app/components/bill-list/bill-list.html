@@ -5,6 +5,7 @@
       <ng-container *ngFor="let bill of (bills$ | async)">
         <li *ngIf="!bill.paid">
           {{ bill.description }}<span *ngIf="bill.amount"> - ${{ bill.amount }}</span>
+          <div class="bill-date">{{ bill.date | date:'dd/MM/yy' }}</div>
           <button (click)="markAsPaid(bill.id)">Mark as paid</button>
         </li>
       </ng-container>
@@ -34,6 +35,16 @@
           min="0"
         />
       </div>
+      <div class="form-group">
+        <label for="bill-date">Date</label>
+        <input
+          id="bill-date"
+          type="date"
+          name="date"
+          [(ngModel)]="newDate"
+          required
+        />
+      </div>
       <button type="submit" [disabled]="taskForm.invalid" class="add-bill-btn">
         Add Bill
       </button>
@@ -44,7 +55,9 @@
     <ul>
       <ng-container *ngFor="let bill of (bills$ | async)">
         <li *ngIf="bill.paid">
-          {{ bill.description }}<span *ngIf="bill.amount"> - ${{ bill.amount }}</span> <span>✔️ Paid</span>
+          {{ bill.description }}<span *ngIf="bill.amount"> - ${{ bill.amount }}</span>
+          <div class="bill-date">{{ bill.date | date:'dd/MM/yy' }}</div>
+          <span>✔️ Paid</span>
         </li>
       </ng-container>
     </ul>

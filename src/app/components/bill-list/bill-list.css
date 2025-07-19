@@ -40,6 +40,16 @@
   justify-content: space-between;
   align-items: center;
   font-size: 1rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.bill-date {
+  font-size: 0.85rem;
+  color: rgba(0, 44, 190, 0.6);
+  font-weight: 500;
+  flex-basis: 100%;
+  margin-top: 0.25rem;
 }
 
 .kanban-column.unpaid li button {

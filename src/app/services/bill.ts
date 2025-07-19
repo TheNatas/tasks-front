@@ -8,6 +8,7 @@ export interface Bill {
   description: string;
   paid: boolean;
   amount: number;
+  date: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -32,8 +33,8 @@ export class BillService {
     );
   }
 
-  create(description: string, amount: number) {
-    const bill = { description, amount, paid: false };
+  create(description: string, amount: number, date: string) {
+    const bill = { description, amount, date, paid: false };
     return this.http.post<Bill>('http://localhost:8080/api/bills', bill).pipe(
       tap(() => this.loadAll().subscribe()) // refresh after create
     );

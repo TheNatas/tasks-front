@@ -15,6 +15,7 @@ export class BillListComponent {
   bills$ = this.billService.bills$;
   newDescription = '';
   newAmount = 0;
+  newDate = new Date().toISOString().split('T')[0]; // Current date in YYYY-MM-DD format
 
   ngOnInit(): void {
     this.billService.loadAll().subscribe();
@@ -27,9 +28,10 @@ export class BillListComponent {
   addBill() {
     if (!this.newDescription.trim()) return;
 
-    this.billService.create(this.newDescription, this.newAmount).subscribe(() => {
+    this.billService.create(this.newDescription, this.newAmount, this.newDate).subscribe(() => {
       this.newDescription = ''; // clear input after creation
       this.newAmount = 0;
+      this.newDate = new Date().toISOString().split('T')[0]; // reset to current date
     });
   }
 
