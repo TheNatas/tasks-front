@@ -4,6 +4,7 @@ import { tap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { BehaviorSubject } from 'rxjs';
 import { Router } from '@angular/router';
+import { environment } from '../../environments/environment';
 
 interface LoginResponse {
   accessToken: string;
@@ -14,7 +15,7 @@ interface LoginResponse {
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:8080/api/auth';
+  private apiUrl = `${environment.apiUrl}/auth`;
 
   private accessTokenSubject = new BehaviorSubject<string | null>(localStorage.getItem('accessToken'));
   accessToken$ = this.accessTokenSubject.asObservable();
