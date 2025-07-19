@@ -10,21 +10,33 @@
       </ng-container>
     </ul>
     <form (ngSubmit)="addBill()" #taskForm="ngForm" class="add-bill-form">
-      <input
-        type="text"
-        name="description"
-        [(ngModel)]="newDescription"
-        required
-        placeholder="New bill description"
-      />
-      <input
-        type="number"
-        name="amount"
-        [(ngModel)]="newAmount"
-        required
-        placeholder="New bill amount"
-      />
-      <button type="submit" [disabled]="taskForm.invalid">Add Bill</button>
+      <div class="form-group">
+        <label for="bill-description">Description</label>
+        <input
+          id="bill-description"
+          type="text"
+          name="description"
+          [(ngModel)]="newDescription"
+          required
+          placeholder="Enter bill description"
+        />
+      </div>
+      <div class="form-group">
+        <label for="bill-amount">Amount</label>
+        <input
+          id="bill-amount"
+          type="number"
+          name="amount"
+          [(ngModel)]="newAmount"
+          required
+          placeholder="Enter amount"
+          step="0.01"
+          min="0"
+        />
+      </div>
+      <button type="submit" [disabled]="taskForm.invalid" class="add-bill-btn">
+        Add Bill
+      </button>
     </form>
   </div>
   <div class="kanban-column paid">

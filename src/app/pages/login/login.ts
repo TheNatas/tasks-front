@@ -10,6 +10,7 @@ import { Router } from '@angular/router';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './login.html',
+  styleUrls: ['./login.css']
 })
 export class LoginComponent {
   fb = inject(FormBuilder);

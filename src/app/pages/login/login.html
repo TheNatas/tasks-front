@@ -1,16 +1,31 @@
 <!-- login.component.html -->
-<form [formGroup]="form" (ngSubmit)="login()">
-  <label>
-    Username:
-    <input type="text" formControlName="username" />
-  </label>
+<div class="login-container">
+  <h2>Welcome Back</h2>
+  <form [formGroup]="form" (ngSubmit)="login()" class="login-form">
+    <div class="form-group">
+      <label for="username">Username</label>
+      <input
+        id="username"
+        type="text"
+        formControlName="username"
+        placeholder="Enter your username"
+      />
+    </div>
 
-  <label>
-    Password:
-    <input type="password" formControlName="password" />
-  </label>
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input
+        id="password"
+        type="password"
+        formControlName="password"
+        placeholder="Enter your password"
+      />
+    </div>
 
-  <button type="submit" [disabled]="form.invalid">Login</button>
+    <button type="submit" [disabled]="form.invalid" class="login-btn">
+      Login
+    </button>
 
-  <p *ngIf="error" style="color: red">{{ error }}</p>
-</form>
+    <div *ngIf="error" class="error-message">{{ error }}</div>
+  </form>
+</div>
