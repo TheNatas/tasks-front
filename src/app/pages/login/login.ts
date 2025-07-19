@@ -1,8 +1,7 @@
-// login.component.ts
 import { Component, inject, OnInit } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { AuthService } from '../../services/auth'; // We’ll create this next
+import { AuthService } from '../../services/auth';
 import { Router } from '@angular/router';
 import { UserService } from '../../services/user';
 
@@ -36,7 +35,7 @@ export class LoginComponent implements OnInit {
   login() {
     const { username, password } = this.form.value;
     this.auth.login(username!, password!).subscribe({
-      next: () => this.router.navigate(['/']), // or dashboard route
+      next: () => this.router.navigate(['/']),
       error: () => this.error = 'Invalid credentials',
     });
   }

@@ -14,7 +14,7 @@ interface LoginResponse {
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:8080/api/auth'; // Adjust if needed
+  private apiUrl = 'http://localhost:8080/api/auth';
 
   private accessTokenSubject = new BehaviorSubject<string | null>(localStorage.getItem('accessToken'));
   accessToken$ = this.accessTokenSubject.asObservable();
