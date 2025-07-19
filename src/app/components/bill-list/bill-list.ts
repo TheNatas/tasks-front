@@ -16,6 +16,7 @@ export class BillListComponent {
   newDescription = '';
   newAmount = 0;
   newDate = new Date().toISOString().split('T')[0]; // Current date in YYYY-MM-DD format
+  showAddForm = false;
 
   ngOnInit(): void {
     this.billService.loadAll().subscribe();
@@ -25,6 +26,10 @@ export class BillListComponent {
     this.billService.markAsPaid(id).subscribe();
   }
 
+  toggleAddForm() {
+    this.showAddForm = !this.showAddForm;
+  }
+
   addBill() {
     if (!this.newDescription.trim()) return;
 
@@ -32,6 +37,7 @@ export class BillListComponent {
       this.newDescription = ''; // clear input after creation
       this.newAmount = 0;
       this.newDate = new Date().toISOString().split('T')[0]; // reset to current date
+      this.showAddForm = false; // hide form after successful submission
     });
   }
 

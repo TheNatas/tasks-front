@@ -10,7 +10,13 @@
         </li>
       </ng-container>
     </ul>
-    <form (ngSubmit)="addBill()" #taskForm="ngForm" class="add-bill-form">
+
+    <button *ngIf="!showAddForm" (click)="toggleAddForm()" class="toggle-add-btn">
+      <span class="plus-icon">+</span>
+      Add Bill
+    </button>
+
+    <form *ngIf="showAddForm" (ngSubmit)="addBill()" #taskForm="ngForm" class="add-bill-form">
       <div class="form-group">
         <label for="bill-description">Description</label>
         <input
@@ -45,9 +51,14 @@
           required
         />
       </div>
-      <button type="submit" [disabled]="taskForm.invalid" class="add-bill-btn">
-        Add Bill
-      </button>
+      <div class="form-actions">
+        <button type="submit" [disabled]="taskForm.invalid" class="save-bill-btn">
+          Save
+        </button>
+        <button type="button" (click)="toggleAddForm()" class="cancel-btn">
+          Cancel
+        </button>
+      </div>
     </form>
   </div>
   <div class="kanban-column paid">
