@@ -12,6 +12,12 @@ export interface Bill {
   date: string;
 }
 
+export interface MonthlyBills {
+  month: string;
+  totalAmount: number;
+  bills: Bill[];
+}
+
 @Injectable({ providedIn: 'root' })
 export class BillService {
   private billsSubject = new BehaviorSubject<Bill[]>([]);
@@ -23,6 +29,10 @@ export class BillService {
     return this.http.get<Bill[]>(`${environment.apiUrl}/bills`).pipe(
       tap(bills => this.billsSubject.next(bills))
     );
+  }
+
+  getBillsByMonth() {
+    return this.http.get<MonthlyBills[]>(`${environment.apiUrl}/bills/grouped-by-month`);
   }
 
   markAsPaid(id: number) {

@@ -1,8 +1,20 @@
+<div class="month-selector">
+  <label for="month-select">Select Month:</label>
+  <select id="month-select" [(ngModel)]="selectedMonth" (change)="onMonthChange()">
+    <option *ngFor="let month of availableMonths" [value]="month">
+      {{ month | date:'MMMM yyyy' }}
+    </option>
+  </select>
+  <div class="month-total" *ngIf="selectedMonth">
+    Total for {{ selectedMonth | date:'MMMM yyyy' }}: ${{ currentMonthTotal }}
+  </div>
+</div>
+
 <div class="kanban-board">
   <div class="kanban-column unpaid">
     <h2>Unpaid</h2>
     <ul>
-      <ng-container *ngFor="let bill of (bills$ | async)">
+      <ng-container *ngFor="let bill of currentMonthBills">
         <li *ngIf="!bill.paid">
           {{ bill.description }}<span *ngIf="bill.amount"> - ${{ bill.amount }}</span>
           <div class="bill-date">{{ bill.date | date:'dd/MM/yy' }}</div>
@@ -64,7 +76,7 @@
   <div class="kanban-column paid">
     <h2>Paid</h2>
     <ul>
-      <ng-container *ngFor="let bill of (bills$ | async)">
+      <ng-container *ngFor="let bill of currentMonthBills">
         <li *ngIf="bill.paid">
           {{ bill.description }}<span *ngIf="bill.amount"> - ${{ bill.amount }}</span>
           <div class="bill-date">{{ bill.date | date:'dd/MM/yy' }}</div>
