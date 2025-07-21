@@ -1,32 +1,75 @@
-import { Component, inject, ViewChild } from '@angular/core';
+import {
+  Component,
+  inject,
+  ViewChild,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { BillService, MonthlyBills, Bill } from '../../services/bill';
+import { BillService, Bill } from '../../services/bill';
 import { FormsModule, NgForm } from '@angular/forms';
+import {
+  Observable,
+  Subscription,
+  combineLatest,
+  map,
+  BehaviorSubject,
+} from 'rxjs';
 
 @Component({
   selector: 'app-bill-list',
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './bill-list.html',
-  styleUrls: ['./bill-list.css']
+  styleUrls: ['./bill-list.css'],
 })
-export class BillListComponent {
+export class BillListComponent implements OnInit, OnDestroy {
   private billService = inject(BillService);
+  private subscriptions = new Subscription();
 
   @ViewChild('taskForm') taskForm!: NgForm;
 
-  monthlyBillsData: MonthlyBills[] = [];
+  billsGroupedByMonth$ = this.billService.billsGroupedByMonth$;
+
   availableMonths: string[] = [];
-  selectedMonth = '';
-  currentMonthBills: Bill[] = [];
-  currentMonthTotal = 0;
-  paidBillsTotal = 0;
-  pendingBillsTotal = 0;
+  selectedMonth = ''; // Used for ngModel only
+  selectedMonth$ = new BehaviorSubject<string>(''); // Used for reactive logic
 
   newDescription = '';
   newAmount = 0;
   newDate = new Date().toISOString().split('T')[0]; // Current date in YYYY-MM-DD format
   showAddForm = false;
+
+  currentMonthBills$: Observable<Bill[]> = combineLatest([
+    this.billsGroupedByMonth$,
+    this.selectedMonth$,
+  ]).pipe(
+    map(([monthlyBills, selectedMonth]) => {
+      return (
+        monthlyBills.find((m) => m.month === selectedMonth)?.bills ?? []
+      );
+    })
+  );
+
+  currentMonthTotal$: Observable<number> = this.currentMonthBills$.pipe(
+    map((bills) => bills.reduce((sum, b) => sum + b.amount, 0))
+  );
+
+  paidBillsTotal$: Observable<number> = this.currentMonthBills$.pipe(
+    map((bills) =>
+      bills
+        .filter((b) => b.paid)
+        .reduce((sum, b) => sum + b.amount, 0)
+    )
+  );
+
+  pendingBillsTotal$: Observable<number> = this.currentMonthBills$.pipe(
+    map((bills) =>
+      bills
+        .filter((b) => !b.paid)
+        .reduce((sum, b) => sum + b.amount, 0)
+    )
+  );
 
   ngOnInit(): void {
     this.generateCurrentYearMonths();
@@ -38,52 +81,32 @@ export class BillListComponent {
     this.availableMonths = [];
 
     for (let month = 1; month <= 12; month++) {
-      const monthString = `${currentYear}-${month.toString().padStart(2, '0')}`;
+      const monthString = `${currentYear}-${month
+        .toString()
+        .padStart(2, '0')}`;
       this.availableMonths.push(monthString);
     }
 
     // Set current month as default
-    this.selectedMonth = new Date().toISOString().slice(0, 7); // YYYY-MM format
+    this.selectedMonth = new Date().toISOString().slice(0, 7);
+    this.selectedMonth$.next(this.selectedMonth);
+  }
+
+  onMonthChange(newMonth: string): void {
+    this.selectedMonth = newMonth;
+    this.selectedMonth$.next(newMonth);
   }
 
   loadMonthlyBills(): void {
-    this.billService.getBillsByMonth().subscribe(data => {
-      this.monthlyBillsData = data;
-      this.updateCurrentMonthData();
-    });
-  }
-
-  onMonthChange(): void {
-    this.updateCurrentMonthData();
-  }
-
-  private updateCurrentMonthData(): void {
-    const monthData = this.monthlyBillsData.find(item => item.month === this.selectedMonth);
-    if (monthData) {
-      this.currentMonthBills = monthData.bills;
-      this.currentMonthTotal = monthData.totalAmount;
-
-      // Calculate paid and pending totals
-      this.paidBillsTotal = this.currentMonthBills
-        .filter(bill => bill.paid)
-        .reduce((sum, bill) => sum + bill.amount, 0);
-
-      this.pendingBillsTotal = this.currentMonthBills
-        .filter(bill => !bill.paid)
-        .reduce((sum, bill) => sum + bill.amount, 0);
-    } else {
-      this.currentMonthBills = [];
-      this.currentMonthTotal = 0;
-      this.paidBillsTotal = 0;
-      this.pendingBillsTotal = 0;
-    }
+    const sub = this.billService.getBillsByMonth().subscribe();
+    this.subscriptions.add(sub);
   }
 
   markAsPaid(id: number) {
-    this.billService.markAsPaid(id).subscribe(() => {
-      // Reload monthly data after marking as paid
-      this.loadMonthlyBills();
+    const sub = this.billService.markAsPaid(id).subscribe(() => {
+      this.loadMonthlyBills(); // refresh data
     });
+    this.subscriptions.add(sub);
   }
 
   toggleAddForm() {
@@ -93,44 +116,27 @@ export class BillListComponent {
   addBill() {
     if (!this.newDescription.trim()) return;
 
-    this.billService.create(this.newDescription, this.newAmount, this.newDate).subscribe(() => {
-      // Clear form fields
-      this.newDescription = '';
-      this.newAmount = 0;
-      this.newDate = new Date().toISOString().split('T')[0];
+    this.billService
+      .create(this.newDescription, this.newAmount, this.newDate)
+      .subscribe(() => {
+        this.newDescription = '';
+        this.newAmount = 0;
+        this.newDate = new Date().toISOString().split('T')[0];
 
-      // Reset form validation state
-      if (this.taskForm) {
-        this.taskForm.resetForm({
-          description: '',
-          amount: 0,
-          date: this.newDate
-        });
-      }
+        if (this.taskForm) {
+          this.taskForm.resetForm({
+            description: '',
+            amount: 0,
+            date: this.newDate,
+          });
+        }
 
-      this.showAddForm = false;
-      this.loadMonthlyBills();
-    });
-  }
-
-  // Uglier approach: explicitly subscribe to getAll and manually trigger change detection
-  /*
-  tasks = [] as Task[];
-  private cdr = inject(ChangeDetectorRef);
-
-  constructor() {
-    this.taskService.getAll().subscribe(tasks => {
-      this.tasks = tasks;
-    });
-  }
-
-  markAsDone(id: number) {
-    this.taskService.markAsDone(id).subscribe(() => {
-      this.taskService.getAll().subscribe(tasks => {
-        this.tasks = tasks;
-        this.cdr.detectChanges(); // manually trigger view update
+        this.showAddForm = false;
+        this.loadMonthlyBills();
       });
-    });
   }
-  */
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
+  }
 }

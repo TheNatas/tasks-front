@@ -1,26 +1,31 @@
 <div class="month-selector">
   <label for="month-select">Select Month:</label>
-  <select id="month-select" [(ngModel)]="selectedMonth" (change)="onMonthChange()">
+  <select
+    id="month-select"
+    [(ngModel)]="selectedMonth"
+    (ngModelChange)="onMonthChange($event)">
     <option *ngFor="let month of availableMonths" [value]="month">
       {{ month | date:'MMMM yyyy' }}
     </option>
   </select>
+
   <div class="month-totals" *ngIf="selectedMonth">
     <div class="total-summary">
       <span class="month-label">{{ selectedMonth | date:'MMMM yyyy' }} Summary:</span>
     </div>
+
     <div class="totals-breakdown">
       <div class="total-item pending">
         <span class="total-label">Pending:</span>
-        <span class="total-amount">${{ pendingBillsTotal | number:'1.2-2' }}</span>
+        <span class="total-amount">${{ pendingBillsTotal$ | async }}</span>
       </div>
       <div class="total-item paid">
         <span class="total-label">Paid:</span>
-        <span class="total-amount">${{ paidBillsTotal | number:'1.2-2' }}</span>
+        <span class="total-amount">${{ paidBillsTotal$ | async }}</span>
       </div>
       <div class="total-item overall">
         <span class="total-label">Total:</span>
-        <span class="total-amount">${{ currentMonthTotal | number:'1.2-2' }}</span>
+        <span class="total-amount">${{ currentMonthTotal$ | async }}</span>
       </div>
     </div>
   </div>
@@ -30,7 +35,7 @@
   <div class="kanban-column unpaid">
     <h2>Unpaid</h2>
     <ul>
-      <ng-container *ngFor="let bill of currentMonthBills">
+      <ng-container *ngFor="let bill of currentMonthBills$ | async">
         <li *ngIf="!bill.paid">
           {{ bill.description }}<span *ngIf="bill.amount"> - ${{ bill.amount }}</span>
           <div class="bill-date">{{ bill.date | date:'dd/MM/yy' }}</div>
@@ -92,7 +97,7 @@
   <div class="kanban-column paid">
     <h2>Paid</h2>
     <ul>
-      <ng-container *ngFor="let bill of currentMonthBills">
+      <ng-container *ngFor="let bill of currentMonthBills$ | async">
         <li *ngIf="bill.paid">
           {{ bill.description }}<span *ngIf="bill.amount"> - ${{ bill.amount }}</span>
           <div class="bill-date">{{ bill.date | date:'dd/MM/yy' }}</div>

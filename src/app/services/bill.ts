@@ -21,7 +21,9 @@ export interface MonthlyBills {
 @Injectable({ providedIn: 'root' })
 export class BillService {
   private billsSubject = new BehaviorSubject<Bill[]>([]);
+  private billsGroupedByMonthSubject = new BehaviorSubject<MonthlyBills[]>([]);
   bills$ = this.billsSubject.asObservable();
+  billsGroupedByMonth$ = this.billsGroupedByMonthSubject.asObservable();
 
   constructor(private http: HttpClient) {}
 
@@ -32,7 +34,9 @@ export class BillService {
   }
 
   getBillsByMonth() {
-    return this.http.get<MonthlyBills[]>(`${environment.apiUrl}/bills/grouped-by-month`);
+    return this.http.get<MonthlyBills[]>(`${environment.apiUrl}/bills/grouped-by-month`).pipe(
+      tap(bills => this.billsGroupedByMonthSubject.next(bills))
+    );
   }
 
   markAsPaid(id: number) {
