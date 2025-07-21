@@ -1,7 +1,7 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BillService, MonthlyBills, Bill } from '../../services/bill';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 
 @Component({
   selector: 'app-bill-list',
@@ -12,6 +12,8 @@ import { FormsModule } from '@angular/forms';
 })
 export class BillListComponent {
   private billService = inject(BillService);
+
+  @ViewChild('taskForm') taskForm!: NgForm;
 
   monthlyBillsData: MonthlyBills[] = [];
   availableMonths: string[] = [];
@@ -79,11 +81,21 @@ export class BillListComponent {
     if (!this.newDescription.trim()) return;
 
     this.billService.create(this.newDescription, this.newAmount, this.newDate).subscribe(() => {
-      this.newDescription = ''; // clear input after creation
+      // Clear form fields
+      this.newDescription = '';
       this.newAmount = 0;
-      this.newDate = new Date().toISOString().split('T')[0]; // reset to current date
-      this.showAddForm = false; // hide form after successful submission
-      // Reload monthly data after creating a new bill
+      this.newDate = new Date().toISOString().split('T')[0];
+
+      // Reset form validation state
+      if (this.taskForm) {
+        this.taskForm.resetForm({
+          description: '',
+          amount: 0,
+          date: this.newDate
+        });
+      }
+
+      this.showAddForm = false;
       this.loadMonthlyBills();
     });
   }
