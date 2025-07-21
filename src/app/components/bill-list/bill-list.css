@@ -34,13 +34,89 @@
   box-shadow: 0 0 0 3px rgba(0, 44, 190, 0.1);
 }
 
-.month-total {
-  background: rgba(0, 44, 190, 0.1);
+.month-totals {
+  background: rgba(0, 44, 190, 0.05);
+  border-radius: 8px;
+  padding: 1rem;
+  border: 1px solid rgba(0, 44, 190, 0.1);
+}
+
+.total-summary {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.month-label {
   color: var(--primary-color);
-  padding: 0.75rem 1.5rem;
-  border-radius: 6px;
   font-weight: 600;
   font-size: 1.1rem;
+}
+
+.totals-breakdown {
+  display: flex;
+  justify-content: space-around;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.total-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  min-width: 100px;
+  flex: 1;
+}
+
+.total-item.pending {
+  background: rgba(255, 152, 0, 0.1);
+  border: 1px solid rgba(255, 152, 0, 0.3);
+}
+
+.total-item.paid {
+  background: rgba(76, 175, 80, 0.1);
+  border: 1px solid rgba(76, 175, 80, 0.3);
+}
+
+.total-item.overall {
+  background: rgba(0, 44, 190, 0.1);
+  border: 1px solid rgba(0, 44, 190, 0.3);
+}
+
+.total-label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+}
+
+.total-item.pending .total-label {
+  color: #f57c00;
+}
+
+.total-item.paid .total-label {
+  color: #4caf50;
+}
+
+.total-item.overall .total-label {
+  color: var(--primary-color);
+}
+
+.total-amount {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.total-item.pending .total-amount {
+  color: #e65100;
+}
+
+.total-item.paid .total-amount {
+  color: #2e7d32;
+}
+
+.total-item.overall .total-amount {
+  color: var(--primary-color);
 }
 
 .kanban-board {

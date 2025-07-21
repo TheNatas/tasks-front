@@ -20,6 +20,8 @@ export class BillListComponent {
   selectedMonth = '';
   currentMonthBills: Bill[] = [];
   currentMonthTotal = 0;
+  paidBillsTotal = 0;
+  pendingBillsTotal = 0;
 
   newDescription = '';
   newAmount = 0;
@@ -60,9 +62,20 @@ export class BillListComponent {
     if (monthData) {
       this.currentMonthBills = monthData.bills;
       this.currentMonthTotal = monthData.totalAmount;
+
+      // Calculate paid and pending totals
+      this.paidBillsTotal = this.currentMonthBills
+        .filter(bill => bill.paid)
+        .reduce((sum, bill) => sum + bill.amount, 0);
+
+      this.pendingBillsTotal = this.currentMonthBills
+        .filter(bill => !bill.paid)
+        .reduce((sum, bill) => sum + bill.amount, 0);
     } else {
       this.currentMonthBills = [];
       this.currentMonthTotal = 0;
+      this.paidBillsTotal = 0;
+      this.pendingBillsTotal = 0;
     }
   }
 
