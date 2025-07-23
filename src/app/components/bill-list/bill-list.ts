@@ -16,11 +16,12 @@ import {
   map,
   BehaviorSubject,
 } from 'rxjs';
+import { BillChartComponent } from '../bill-chart/bill-chart';
 
 @Component({
   selector: 'app-bill-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, CapitalizePipe],
+  imports: [CommonModule, FormsModule, CapitalizePipe, BillChartComponent],
   templateUrl: './bill-list.html',
   styleUrls: ['./bill-list.css'],
 })
@@ -40,6 +41,9 @@ export class BillListComponent implements OnInit, OnDestroy {
   newAmount = 0;
   newDate = new Date().toISOString().split('T')[0]; // Current date in YYYY-MM-DD format
   showAddForm = false;
+
+  // Tab functionality
+  activeTab: 'monthly' | 'overview' = 'monthly';
 
   currentMonthBills$: Observable<Bill[]> = combineLatest([
     this.billsGroupedByMonth$,
@@ -112,6 +116,10 @@ export class BillListComponent implements OnInit, OnDestroy {
 
   toggleAddForm() {
     this.showAddForm = !this.showAddForm;
+  }
+
+  switchTab(tab: 'monthly' | 'overview') {
+    this.activeTab = tab;
   }
 
   addBill() {

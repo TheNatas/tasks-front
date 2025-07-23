@@ -1,109 +1,133 @@
-<div class="month-selector">
-  <label for="month-select">Selecione o mês:</label>
-  <select
-    id="month-select"
-    [(ngModel)]="selectedMonth"
-    (ngModelChange)="onMonthChange($event)">
-    <option *ngFor="let month of availableMonths" [value]="month">
-      {{ month | date:'MMMM yyyy' | capitalize }}
-    </option>
-  </select>
+<!-- Tab Navigation -->
+<div class="tab-navigation">
+  <button
+    class="tab-button"
+    [class.active]="activeTab === 'monthly'"
+    (click)="switchTab('monthly')">
+    Visão Mensal
+  </button>
+  <button
+    class="tab-button"
+    [class.active]="activeTab === 'overview'"
+    (click)="switchTab('overview')">
+    Visão Geral
+  </button>
+</div>
 
-  <div class="month-totals" *ngIf="selectedMonth">
-    <div class="total-summary">
-      <span class="month-label">{{ selectedMonth | date:'MMMM yyyy' | capitalize }} Resumo:</span>
+<!-- Monthly View Tab Content -->
+<div *ngIf="activeTab === 'monthly'" class="tab-content">
+  <div class="month-selector">
+    <label for="month-select">Selecione o mês:</label>
+    <select
+      id="month-select"
+      [(ngModel)]="selectedMonth"
+      (ngModelChange)="onMonthChange($event)">
+      <option *ngFor="let month of availableMonths" [value]="month">
+        {{ month | date:'MMMM yyyy' | capitalize }}
+      </option>
+    </select>
+
+    <div class="month-totals" *ngIf="selectedMonth">
+      <div class="total-summary">
+        <span class="month-label">{{ selectedMonth | date:'MMMM yyyy' | capitalize }} Resumo:</span>
+      </div>
+
+      <div class="totals-breakdown">
+        <div class="total-item pending">
+          <span class="total-label">Pendente:</span>
+          <span class="total-amount">R${{ pendingBillsTotal$ | async }}</span>
+        </div>
+        <div class="total-item paid">
+          <span class="total-label">Pago:</span>
+          <span class="total-amount">R${{ paidBillsTotal$ | async }}</span>
+        </div>
+        <div class="total-item overall">
+          <span class="total-label">Total:</span>
+          <span class="total-amount">R${{ currentMonthTotal$ | async }}</span>
+        </div>
+      </div>
     </div>
+  </div>
 
-    <div class="totals-breakdown">
-      <div class="total-item pending">
-        <span class="total-label">Pendente:</span>
-        <span class="total-amount">R${{ pendingBillsTotal$ | async }}</span>
-      </div>
-      <div class="total-item paid">
-        <span class="total-label">Pago:</span>
-        <span class="total-amount">R${{ paidBillsTotal$ | async }}</span>
-      </div>
-      <div class="total-item overall">
-        <span class="total-label">Total:</span>
-        <span class="total-amount">R${{ currentMonthTotal$ | async }}</span>
-      </div>
+  <div class="kanban-board">
+    <div class="kanban-column unpaid">
+      <h2>Em aberto</h2>
+      <ul>
+        <ng-container *ngFor="let bill of currentMonthBills$ | async">
+          <li *ngIf="!bill.paid">
+            {{ bill.description }}<span *ngIf="bill.amount"> - R${{ bill.amount }}</span>
+            <div class="bill-date">{{ bill.date | date:'dd/MM/yy' }}</div>
+            <button (click)="markAsPaid(bill.id)">Marcar como pago</button>
+          </li>
+        </ng-container>
+      </ul>
+
+      <button *ngIf="!showAddForm" (click)="toggleAddForm()" class="toggle-add-btn">
+        <span class="plus-icon">+</span>
+        Adicionar conta
+      </button>
+
+      <form *ngIf="showAddForm" (ngSubmit)="addBill()" #taskForm="ngForm" class="add-bill-form">
+        <div class="form-group">
+          <label for="bill-description">Descrição</label>
+          <input
+            id="bill-description"
+            type="text"
+            name="description"
+            [(ngModel)]="newDescription"
+            required
+            placeholder="Digite a descrição da conta"
+          />
+        </div>
+        <div class="form-group">
+          <label for="bill-amount">Valor</label>
+          <input
+            id="bill-amount"
+            type="number"
+            name="amount"
+            [(ngModel)]="newAmount"
+            required
+            placeholder="Digite o valor"
+            step="0.01"
+            min="0"
+          />
+        </div>
+        <div class="form-group">
+          <label for="bill-date">Data de vencimento</label>
+          <input
+            id="bill-date"
+            type="date"
+            name="date"
+            [(ngModel)]="newDate"
+            required
+          />
+        </div>
+        <div class="form-actions">
+          <button type="submit" [disabled]="taskForm.invalid" class="save-bill-btn">
+            Salvar
+          </button>
+          <button type="button" (click)="toggleAddForm()" class="cancel-btn">
+            Cancelar
+          </button>
+        </div>
+      </form>
+    </div>
+    <div class="kanban-column paid">
+      <h2>Pagas</h2>
+      <ul>
+        <ng-container *ngFor="let bill of currentMonthBills$ | async">
+          <li *ngIf="bill.paid">
+            {{ bill.description }}<span *ngIf="bill.amount"> - R${{ bill.amount }}</span>
+            <div class="bill-date">{{ bill.date | date:'dd/MM/yy' }}</div>
+            <span>✔️ Pago</span>
+          </li>
+        </ng-container>
+      </ul>
     </div>
   </div>
 </div>
 
-<div class="kanban-board">
-  <div class="kanban-column unpaid">
-    <h2>Em aberto</h2>
-    <ul>
-      <ng-container *ngFor="let bill of currentMonthBills$ | async">
-        <li *ngIf="!bill.paid">
-          {{ bill.description }}<span *ngIf="bill.amount"> - R${{ bill.amount }}</span>
-          <div class="bill-date">{{ bill.date | date:'dd/MM/yy' }}</div>
-          <button (click)="markAsPaid(bill.id)">Marcar como pago</button>
-        </li>
-      </ng-container>
-    </ul>
-
-    <button *ngIf="!showAddForm" (click)="toggleAddForm()" class="toggle-add-btn">
-      <span class="plus-icon">+</span>
-      Adicionar conta
-    </button>
-
-    <form *ngIf="showAddForm" (ngSubmit)="addBill()" #taskForm="ngForm" class="add-bill-form">
-      <div class="form-group">
-        <label for="bill-description">Descrição</label>
-        <input
-          id="bill-description"
-          type="text"
-          name="description"
-          [(ngModel)]="newDescription"
-          required
-          placeholder="Digite a descrição da conta"
-        />
-      </div>
-      <div class="form-group">
-        <label for="bill-amount">Valor</label>
-        <input
-          id="bill-amount"
-          type="number"
-          name="amount"
-          [(ngModel)]="newAmount"
-          required
-          placeholder="Digite o valor"
-          step="0.01"
-          min="0"
-        />
-      </div>
-      <div class="form-group">
-        <label for="bill-date">Data de vencimento</label>
-        <input
-          id="bill-date"
-          type="date"
-          name="date"
-          [(ngModel)]="newDate"
-          required
-        />
-      </div>
-      <div class="form-actions">
-        <button type="submit" [disabled]="taskForm.invalid" class="save-bill-btn">
-          Salvar
-        </button>
-        <button type="button" (click)="toggleAddForm()" class="cancel-btn">
-          Cancelar
-        </button>
-      </div>
-    </form>
-  </div>
-  <div class="kanban-column paid">
-    <h2>Pagas</h2>
-    <ul>
-      <ng-container *ngFor="let bill of currentMonthBills$ | async">
-        <li *ngIf="bill.paid">
-          {{ bill.description }}<span *ngIf="bill.amount"> - R${{ bill.amount }}</span>
-          <div class="bill-date">{{ bill.date | date:'dd/MM/yy' }}</div>
-          <span>✔️ Pago</span>
-        </li>
-      </ng-container>
-    </ul>
-  </div>
+<!-- Overview Tab Content -->
+<div *ngIf="activeTab === 'overview'" class="tab-content">
+  <app-bill-chart></app-bill-chart>
 </div>

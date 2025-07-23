@@ -1,0 +1,160 @@
+.chart-container {
+  background: var(--background-color);
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-top: 2rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  width: 100vw;
+  max-width: none;
+  margin-left: calc(-50vw + 50%);
+  margin-right: calc(-50vw + 50%);
+  position: relative;
+}
+
+.chart-container h3 {
+  text-align: center;
+  color: var(--primary-color);
+  margin-bottom: 1.5rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.chart-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  align-items: center;
+  width: 100%;
+}
+
+.chart-wrapper {
+  width: 100%;
+  height: 400px;
+  position: relative;
+}
+
+.chart-container canvas {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  max-height: none !important;
+}
+
+.chart-stats {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  width: 100%;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  border-radius: 6px;
+  text-align: center;
+  border: 2px solid transparent;
+}
+
+.stat-item.paid {
+  background: rgba(76, 175, 80, 0.1);
+  border-color: rgba(76, 175, 80, 0.3);
+}
+
+.stat-item.unpaid {
+  background: rgba(255, 152, 0, 0.1);
+  border-color: rgba(255, 152, 0, 0.3);
+}
+
+.stat-item.total {
+  background: rgba(0, 44, 190, 0.1);
+  border-color: rgba(0, 44, 190, 0.3);
+}
+
+.stat-item.overview {
+  background: rgba(156, 39, 176, 0.1);
+  border-color: rgba(156, 39, 176, 0.3);
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.stat-item.paid .stat-label {
+  color: #4caf50;
+}
+
+.stat-item.unpaid .stat-label {
+  color: #f57c00;
+}
+
+.stat-item.total .stat-label {
+  color: var(--primary-color);
+}
+
+.stat-item.overview .stat-label {
+  color: #9c27b0;
+}
+
+.stat-value {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.stat-item.paid .stat-value {
+  color: #2e7d32;
+}
+
+.stat-item.unpaid .stat-value {
+  color: #e65100;
+}
+
+.stat-item.total .stat-value {
+  color: var(--primary-color);
+}
+
+.stat-item.overview .stat-value {
+  color: #7b1fa2;
+}
+
+.stat-count {
+  font-size: 0.8rem;
+  opacity: 0.8;
+  font-weight: 500;
+}
+
+.stat-item.paid .stat-count {
+  color: #4caf50;
+}
+
+.stat-item.unpaid .stat-count {
+  color: #f57c00;
+}
+
+.stat-item.total .stat-count {
+  color: var(--primary-color);
+}
+
+.stat-item.overview .stat-count {
+  color: #9c27b0;
+}
+
+@media (max-width: 768px) {
+  .chart-content {
+    flex-direction: column;
+  }
+
+  .chart-stats {
+    width: 100%;
+  }
+
+  .chart-container {
+    max-width: 100%;
+    margin: 2rem 1rem 0;
+  }
+}
