@@ -6,6 +6,7 @@ import {
   OnInit,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { CapitalizePipe } from '../../pipes/capitalize.pipe';
 import { BillService, Bill } from '../../services/bill';
 import { FormsModule, NgForm } from '@angular/forms';
 import {
@@ -19,7 +20,7 @@ import {
 @Component({
   selector: 'app-bill-list',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, CapitalizePipe],
   templateUrl: './bill-list.html',
   styleUrls: ['./bill-list.css'],
 })

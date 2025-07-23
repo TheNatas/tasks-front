@@ -36,7 +36,7 @@ export class LoginComponent implements OnInit {
     const { username, password } = this.form.value;
     this.auth.login(username!, password!).subscribe({
       next: () => this.router.navigate(['/']),
-      error: () => this.error = 'Invalid credentials',
+      error: () => this.error = 'Credenciais inválidas',
     });
   }
 
@@ -47,11 +47,11 @@ export class LoginComponent implements OnInit {
 
     this.userService.register(username!, password!).subscribe({
       next: () => {
-        this.successMessage = 'Account created successfully! You can now log in.';
+        this.successMessage = 'Conta criada com sucesso! Você já pode entrar.';
         this.form.reset();
         this.switchTab('login');
       },
-      error: () => this.error = 'Registration failed. Username might already exist.',
+      error: () => this.error = 'Falha no cadastro. O nome de usuário pode já existir.',
     });
   }
 
