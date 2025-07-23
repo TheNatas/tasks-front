@@ -1,0 +1,12 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  background-color: rgba(0, 44, 190, 0.05);
+  padding: 1rem;
+}
+
+app-logout-button {
+  display: block;
+  margin-bottom: 1.5rem;
+  text-align: right;
+}

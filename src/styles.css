@@ -1,6 +1,8 @@
 :root {
   --primary-color: #002CBE;
-  --background-color: #F4F4F4;
+  --background-color: #E8EFFF;
+  --container-background: #F0F6FF;
+  --card-background: #FFFFFF;
 }
 
 * {
@@ -9,4 +11,7 @@
 
 body {
   font-family: 'Open Sans', sans-serif;
+  background-color: rgba(0, 44, 190, 0.05);
+  min-height: 100vh;
+  margin: 0;
 }
